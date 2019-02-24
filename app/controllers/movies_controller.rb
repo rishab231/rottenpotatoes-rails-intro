@@ -16,7 +16,7 @@ class MoviesController < ApplicationController
     @selected_ratings = params[:ratings]
 
     if @selected_ratings.nil?
-      @selected_ratings = Hash[@all_ratings.collect { |v| [v, 1] }]
+      @selected_ratings = @all_ratings
     else
       @selected_ratings = params[:ratings].keys
     end
@@ -28,7 +28,8 @@ class MoviesController < ApplicationController
       @movies = Movie.order('release_date')
       @release_color = 'hilite'
     else
-      @movies = Movie.with_ratings(@selected_ratings)
+      #@movies = Movie.with_ratings(@selected_ratings)
+      @movies = Movie.with_rating(@selected_ratings)
     end
   end
 
