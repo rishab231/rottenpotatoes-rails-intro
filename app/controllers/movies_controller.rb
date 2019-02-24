@@ -29,7 +29,7 @@ class MoviesController < ApplicationController
       @release_color = 'hilite'
     else
       #@movies = Movie.with_ratings(@selected_ratings)
-      @movies = Movie.with_rating(@selected_ratings)
+      @movies = Movie.with_ratings(@selected_ratings)
     end
   end
 
