@@ -11,12 +11,24 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.all_ratings
+
+    @selected_ratings = params[:ratings]
+
+    if @selected_ratings.nil?
+      @selected_ratings = Hash[@all_ratings.collect { |v| [v, 1] }]
+    else
+      @selected_ratings = params[:ratings].keys
+    end
+
     if params[:sorted]=='title'
       @movies = Movie.order('title')
+      @title_color = 'hilite'
     elsif params[:sorted]=='release_date'
       @movies = Movie.order('release_date')
+      @release_color = 'hilite'
     else
-      @movies = Movie.all
+      @movies = Movie.with_ratings(@selected_ratings)
     end
   end
 
