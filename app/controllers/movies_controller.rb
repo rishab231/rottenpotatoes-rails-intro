@@ -11,25 +11,47 @@ class MoviesController < ApplicationController
   end
 
   def index
+    #@all_ratings = Hash[Movie.all_ratings.collect { |v| [v, 1] }]
     @all_ratings = Movie.all_ratings
-
     @selected_ratings = params[:ratings]
+    @sorted = params[:sorted]
 
-    if @selected_ratings.nil?
-      @selected_ratings = @all_ratings
-    else
-      @selected_ratings = params[:ratings].keys
+    # Redirect case - either selected_ratings or sorted is nil
+    if @selected_ratings.nil? || @sorted.nil?
+      # If @selected_ratings is nil
+      if @selected_ratings.nil?
+        if session[:ratings].nil?
+          @selected_ratings = Hash[@all_ratings.collect { |v| [v, 1] }]
+        else
+          @selected_ratings = session[:ratings]
+        end
+      else
+        # If @sorted is nil
+        if session[:sorted].nil?
+          @sorted = 'unsorted'
+        else
+          @sorted = session[:sorted]
+        end
+      end
+      flash.keep
+      redirect_to :ratings => @selected_ratings, :sorted => @sorted
     end
 
+    session[:ratings] = params[:ratings]
+
     if params[:sorted]=='title'
-      @movies = Movie.order('title')
+      session[:sorted]='title'
       @title_color = 'hilite'
+      @movies = Movie.with_ratings(@selected_ratings.keys, 'title')
     elsif params[:sorted]=='release_date'
-      @movies = Movie.order('release_date')
+      if params[:ratings].nil?
+      end
+      session[:sorted]='release_date'
       @release_color = 'hilite'
+      @movies = Movie.with_ratings(@selected_ratings.keys, 'release_date')
     else
-      #@movies = Movie.with_ratings(@selected_ratings)
-      @movies = Movie.with_ratings(@selected_ratings)
+      session[:sorted] = 'unsorted'
+      @movies = Movie.with_ratings(@selected_ratings.keys, 'unsorted')
     end
   end
 
