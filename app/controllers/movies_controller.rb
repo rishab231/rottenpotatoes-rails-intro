@@ -11,7 +11,6 @@ class MoviesController < ApplicationController
   end
 
   def index
-    #@all_ratings = Hash[Movie.all_ratings.collect { |v| [v, 1] }]
     @all_ratings = Movie.all_ratings
     @selected_ratings = params[:ratings]
     @sorted = params[:sorted]
@@ -44,8 +43,6 @@ class MoviesController < ApplicationController
       @title_color = 'hilite'
       @movies = Movie.with_ratings(@selected_ratings.keys, 'title')
     elsif params[:sorted]=='release_date'
-      if params[:ratings].nil?
-      end
       session[:sorted]='release_date'
       @release_color = 'hilite'
       @movies = Movie.with_ratings(@selected_ratings.keys, 'release_date')
